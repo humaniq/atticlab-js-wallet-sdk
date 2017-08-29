@@ -1,0 +1,37 @@
+{
+  "name": "js-wallet-sdk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --timeout 15000",
+    "start": "webpack -d --watch",
+    "build": "webpack -p && git add ./dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.16.1",
+    "lodash": "^4.17.4",
+    "qs": "^6.4.0",
+    "sjcl": "git+https://github.com/stellar/sjcl.git",
+    "sjcl-scrypt": "git+https://github.com/stellar/sjcl-scrypt.git",
+    "js-sdk": "git+http://bitbucket.attic.pw/scm/hum/js-sdk.git",
+    "tweetnacl": "^1.0.0-rc.1",
+    "tweetnacl-util": "^0.15.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^6.4.1",
+    "babel-preset-es2015": "^6.24.1",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "mocha": "^3.2.0",
+    "pre-commit": "^1.2.2",
+    "webpack": "2.2.1"
+  },
+  "pre-commit": [
+    "build"
+  ]
+}
