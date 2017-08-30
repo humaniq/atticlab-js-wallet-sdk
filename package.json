@@ -17,7 +17,7 @@
     "qs": "^6.4.0",
     "sjcl": "git+https://github.com/stellar/sjcl.git",
     "sjcl-scrypt": "git+https://github.com/stellar/sjcl-scrypt.git",
-    "js-sdk": "git+http://bitbucket.attic.pw/scm/hum/js-sdk.git",
+    "js-sdk": "git+http://github.com/humaniq/js-sdk.git",
     "tweetnacl": "^1.0.0-rc.1",
     "tweetnacl-util": "^0.15.0"
   },
