@@ -183,15 +183,15 @@ module.exports = class extends EventEmitter {
             throw new Error('params is not an object');
         }
 
-        if (_.isEmpty(params.phone) && _.isEmpty(params.email) && _.isEmpty(params.face_uuid)) {
-            throw new Error('You need any of these keys for account: phone, email, face_uuid');
+        if (_.isEmpty(params.phone) && _.isEmpty(params.email) && _.isEmpty(params.face_uuid) && _.isEmpty(params.udid)) {
+            throw new Error('You need any of these keys for account: phone, email, face_uuid, udid');
         }
 
         if (_.isEmpty(params.password) && _.isEmpty(params.password_hash)) {
             throw new Error('You need to provide "password" or "password_hash"');
         }
 
-        return this.axios.post('/wallets/getdata', _.pick(params, ['email', 'phone', 'face_uuid']))
+        return this.axios.post('/wallets/getdata', _.pick(params, ['email', 'phone', 'face_uuid', 'udid']))
             .then(function (resp) {
                 var p = _.extend(resp, params);
                 return Promise.resolve(p);
@@ -232,14 +232,15 @@ module.exports = class extends EventEmitter {
             throw new Error('params is not an object');
         }
 
-        if (_.isEmpty(params.phone) && _.isEmpty(params.email) && _.isEmpty(params.face_uuid)) {
-            throw new Error('You need any of these keys for account: phone, email, face_uuid');
+        if (_.isEmpty(params.phone) && _.isEmpty(params.email) && _.isEmpty(params.face_uuid) && _.isEmpty(params.udid)) {
+            throw new Error('You need any of these keys for account: phone, email, face_uuid, udid');
         }
 
         return this.axios.post('/wallets/exists', _.pick(params, [
             'phone',
             'email',
             'face_uuid',
+            'udid',
         ]));
     }
 
@@ -290,6 +291,54 @@ module.exports = class extends EventEmitter {
                             return crypto.signMessage(data, params.keypair._secretKey);
                         }
                     })
+                    .then(() => {
+                        return Promise.resolve(new Wallet(self, params));
+                    })
+            });
+    }
+
+    setUDID(params) {
+        var self = this;
+
+        if (!_.isObject(params)) {
+            throw new Error('params is not an object');
+        }
+
+        if (!_.isString(params.udid)) {
+            throw new Error('udid is not set');
+        }
+
+        if (!params.keypair instanceof StellarSdk.Keypair) {
+            throw new Error('keypair must be an instanceof StellarSdk.Keypair');
+        }
+
+        params.seed = params.keypair.secret();
+        params.account_id = params.keypair.publicKey();
+        params.salt = crypto.base64Encode(nacl.randomBytes(16));
+
+        return Promise.resolve(params)
+            .then(this.getNonce.bind(this))
+            .then(this.getKdfParams.bind(this))
+            //.then(this._hashPassword.bind(this))
+            .then(this._calculateMasterKey.bind(this))
+            .then(params => {
+                let raw_wallet_id = crypto.deriveWalletId(params.raw_master_key);
+                let raw_wallet_key = crypto.deriveWalletKey(params.raw_master_key);
+
+                params.wallet_id = sjcl.codec.base64.fromBits(raw_wallet_id);
+                params.keychain_data = crypto.encryptData(params.seed, raw_wallet_key);
+
+                return self.axios.post('/wallets/update', _.pick(params, [
+                    'wallet_id',
+                    'keychain_data',
+                    'salt',
+                    'kdf_params',
+                ]), {
+                    nonce: params.nonce,
+                    signRequest: function (data) {
+                        return crypto.signMessage(data, params.keypair._secretKey);
+                    }
+                })
                     .then(() => {
                         return Promise.resolve(new Wallet(self, params));
                     })
