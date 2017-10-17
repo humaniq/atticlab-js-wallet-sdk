@@ -188,7 +188,7 @@ module.exports = class extends EventEmitter {
         }
 
         if (_.isEmpty(params.password) && _.isEmpty(params.password_hash)) {
-            throw new Error('You need to provide "password" or "password_hash"');
+            throw new Error('You need to provide "password" or "password_hash" ! ');
         }
 
         return this.axios.post('/wallets/getdata', _.pick(params, ['email', 'phone', 'face_uuid', 'udid']))
