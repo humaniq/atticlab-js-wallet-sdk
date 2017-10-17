@@ -347,18 +347,9 @@ module.exports = class extends EventEmitter {
 
     sendSms(params) {
         var self = this;
-
-        return this.getData(params)
-            .then(params => {
-                let raw_wallet_id = crypto.deriveWalletId(params.raw_master_key);
-                params.wallet_id = sjcl.codec.base64.fromBits(raw_wallet_id);
-
-                // Send request
                 return self.axios.post('/auth/sendSms', _.pick(params, [
-                    'account_id',
-                    'wallet_id',
+                    'phone',
                 ]));
-            });
     }
 
     _hashPassword(params) {
