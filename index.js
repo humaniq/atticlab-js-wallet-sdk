@@ -134,6 +134,7 @@ module.exports = class extends EventEmitter {
                         'email',
                         'sms_code',
                         'face_uuid',
+                        'udid',
                     ]))
                     .then(() => {
                         return Promise.resolve(new Wallet(self, params));
