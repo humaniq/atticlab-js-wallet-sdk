@@ -132,6 +132,7 @@ module.exports = class extends EventEmitter {
                         'kdf_params',
                         'phone',
                         'email',
+                        'sms_code',
                         'face_uuid',
                     ]))
                     .then(() => {
@@ -215,8 +216,7 @@ module.exports = class extends EventEmitter {
                 return self.axios.post('/wallets/get', _.pick(params, [
                         'account_id',
                         'wallet_id',
-                        'totp_code',
-                        'sms_code'
+                        'totp_code'
                     ]))
                     .then(function (resp) {
                         var p = _.extend(resp, params);
@@ -356,7 +356,7 @@ module.exports = class extends EventEmitter {
         var self = this;
         return self.axios.post('/auth/checkSms', _.pick(params, [
             'phone',
-            'code',
+            'sms_code',
         ]));
     }
 
