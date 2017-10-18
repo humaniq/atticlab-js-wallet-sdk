@@ -352,6 +352,14 @@ module.exports = class extends EventEmitter {
                 ]));
     }
 
+    checkSms(params) {
+        var self = this;
+        return self.axios.post('/auth/checkSms', _.pick(params, [
+            'phone',
+            'code',
+        ]));
+    }
+
     _hashPassword(params) {
         var self = this;
 
