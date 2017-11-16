@@ -353,6 +353,10 @@ module.exports = class extends EventEmitter {
                 ]));
     }
 
+    getCC() {
+        var self = this;
+        return self.axios.post('/auth/getcc');
+    }
     checkSms(params) {
         var self = this;
         return self.axios.post('/auth/checkSms', _.pick(params, [
